@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+{% extends 'lms/base.html' %}
+{% load static %}
+
+{% block title %}
+    -仪器页面
+{% endblock %}
+
+{% block css %}
+    {% static 'lms/css/index.css' %}
+
+{% endblock %}
+{% block insindexHighlight %}
+    active
+{% endblock %}
+{% block main_block %}
+{#    <div class="alert alert-warning alert-dismissible fade show" role="alert">#}
+{#        {% if successInfo %}#}
+{#            <div class="text-center welcomeSlogan"><strong>{{ successInfo }}</strong></div>#}
+{#        {% elif failedInfo %}#}
+{#            <div class="text-center welcomeSlogan"><strong>{{ failedInfo }}</strong></div>#}
+{#        {% elif user.is_authenticated %}#}
+{#            <div class="text-center welcomeSlogan">#}
+{#                <strong>欢迎登录实验室药品使用系统,下面是药品信息</strong>#}
+{#            </div>#}
+{#        {% else %}#}
+{#            <div class="text-center welcomeSlogan"><strong>欢迎登录实验室药品使用系统,还未登录</strong></div>#}
+{#        {% endif %}#}
+{#        <button type="button" class="close" data-dismiss="alert" aria-label="Close">#}
+{#            <span aria-hidden="true">&times;</span>#}
+{#        </button>#}
+{#    </div>#}
+
+
+
+    <div id="table-responsive">
+        <table class="table table-hover">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">序号</th>
+                <th scope="col">仪器编号</th>
+                <th scope="col">仪器名</th>
+                <th scope="col">仪器剩余数量</th>
+                {#                <th scope="col">危险系数(MAX 5)</th>#}
+                <th scope="col">状态|动作</th>
+                {#                <th scope="col">动作</th>#}
+            </tr>
+            </thead>
+            <tbody class="no_underline">
+            {% for ins in instrumentList %}
+                {% if ins.ins_nowtotal == 0 %}
+                    <tr class="table">
+                        <th class="text-dark" scope="row">{{ forloop.counter }}</th>
+                        <td class="text-dark" id="line_through">{{ ins.ins_no }}</td>
+                        <td class="text-dark" id="line_through">{{ ins.ins_name }}</td>
+                        <td class="text-dark" id="line_through">{{ ins.ins_nowtotal }}</td>
+                        <td>
+                            <button type="button" class="btn btn-warning btn-sm">暂时短缺</button>
+                            <button type="button" class="btn btn-info btn-sm">无法借用
+                            </button>
+                        </td>
+                    </tr>
+                {% elif ins.ins_nowtotal <= 50 %}
+                    <tr class="table">
+                       <th class="text-dark" scope="row">{{ forloop.counter }}</th>
+                        <td class="text-dark">{{ ins.ins_no }}</td>
+                        <td class="text-dark">{{ ins.ins_name }}</td>
+                        <td class="text-dark">{{ ins.ins_nowtotal }}</td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm">库存紧张</button>
+                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                    data-target="#myModal{{ ins.id }}" id="addStudent">点击借用
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="myModal{{ ins.id }}" tabindex="-1" role="dialog"
+                                 aria-labelledby="myModal{{ ins.id }}Label"
+                                 aria-hidden="true">
+                                <div class="modal-dialog" role="document" id="stuadd_modal">
+                                    <div class="modal-content">
+
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="myModal{{ ins.id }}Label">
+                                                请确认借用</h5>
+                                            <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+
+                                        <div class="modal-body">
+                                            确认要借用该仪器<strong>{{ ins.ins_name }}</strong>吗？
+
+                                            <br>
+                                            <form action="{% url 'lms:ins_subAndBo' ins.id %}" method="post">
+
+                                                {% csrf_token %}
+
+                                                <div class="form-group">
+                                                    <label for="id_insUsedNum"
+                                                           class="col-sm-4 control-label">数量：</label>
+                                                    <div class="col-sm-8">
+
+                                                        <input type="text" class="form-control"
+                                                               name="insUsedNum"
+                                                               id="id_insUsedNum" required
+                                                               oninput="value=value.replace(/[^\d]/g,'')"
+                                                               placeholder="借用仪器数量">
+                                                    </div>
+                                                </div>
+
+
+
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-primary">确认</button>
+                                                    <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">取消
+                                                    </button>
+                                                </div>
+
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+
+                    </tr>
+                {% else %}
+                    <tr class="table">
+                        <th class="text" scope="row">{{ forloop.counter }}</th>
+                        <td class="text" >{{ ins.ins_no }}</td>
+                        <td class="text" >{{ ins.ins_name }}</td>
+                        <td class="text">{{ ins.ins_nowtotal }} </td>
+                        <td>
+                            <button type="button" class="btn btn-success btn-sm">库存充足
+                            </button>
+
+                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                    data-target="#myModal{{ ins.id }}" id="addStudent">点击借用
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="myModal{{ ins.id }}" tabindex="-1" role="dialog"
+                                 aria-labelledby="myModal{{ ins.id }}Label"
+                                 aria-hidden="true">
+                                <div class="modal-dialog" role="document" id="stuadd_modal">
+                                    <div class="modal-content">
+
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="myModal{{ ins.id }}Label">
+                                                请确认借用</h5>
+                                            <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+
+                                        <div class="modal-body">
+                                            确认要借用该仪器<strong>{{ ins.ins_name }}</strong>吗？
+
+                                            <br>
+                                            <form action="{% url 'lms:ins_subAndBo' ins.id %}" method="post">
+
+                                                {% csrf_token %}
+
+                                                <div class="form-group">
+                                                    <label for="id_insUsedNum"
+                                                           class="col-sm-4 control-label">数量：</label>
+                                                    <div class="col-sm-8">
+
+                                                        <input type="text" class="form-control"
+                                                               name="insUsedNum"
+                                                               id="id_insUsedNum" required
+                                                               oninput="value=value.replace(/[^\d]/g,'')"
+                                                               placeholder="借用仪器数量">
+                                                    </div>
+                                                </div>
+
+
+
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-primary">确认</button>
+                                                    <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">取消
+                                                    </button>
+                                                </div>
+
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {#主体代码结束#}
+
+
+    {# 实现分页标签的代码 #}
+    {# 这里使用 bootstrap 渲染页面 #}
+
+    <div id="pages">
+        <nav>
+            <ul class="pagination">
+                {#                <li class="step-links">#}
+                {% if instrumentList.has_previous %}
+
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ instrumentList.previous_page_number }}">Previous</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                {% endif %}
+
+
+                {#                <span class="current">#}
+                {% for i in paginator.num_pages %}
+                    {% if instrumentList.number == i %}
+                        <li class="page-item active"><span class="page-link"> {{ i }}
+                    <span class="sr-only">(current)</span></span></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+
+                {% endfor %}
+
+                {% if instrumentList.has_next %}
+
+                    <li class="page-item"><a class="page-link"
+                                             href="?page={{ instrumentList.next_page_number }}">Next</a></li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Next</span></li>
+                {% endif %}
+
+                {#                </li>#}
+            </ul>
+        </nav>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+{% extends 'lms/base.html' %}
+{% load static %}
+
+{% block title %}
+    -药品详情
+{% endblock %}
+
+{#{% block commentsHighlight %}#}
+active
+{#{% endblock %}#}
+{% block css %}
+    {% static 'lms/css/detail.css' %}
+{% endblock %}
+
+
+{% block main_block %}
+    <div class="row">
+        {#    左侧栏#}
+        <div class="col-md-6">
+            <ul class="list-group list-group-flush">
+                <br><br>
+
+                <li class="list-group-item">药品编号： {{ medicine.number }}</li>
+                <li class="list-group-item">药品名： <strong>{{ medicine.name }}</strong></li>
+                <li class="list-group-item">药品信息:</li>
+                <li class="list-group-item">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{ medicine.detail }}</li>
+                <li class="list-group-item">药品已使用量： {{ medicine.usedtotal }} g</li>
+                <li class="list-group-item">药品剩余量： {{ medicine.nowtotal }} g</li>
+                <li class="list-group-item">风险度： {{ medicine.riskfactor }}</li>
+            </ul>
+        </div>
+        {#        右侧栏#}
+        <!-- 引入 echarts.js -->
+        <script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>
+        <div class="col-md-6">
+            <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+            <div id="main" style="width: 600px;height:400px;"></div>
+{#            <script type="text/javascript">#}
+{#                // 基于准备好的dom，初始化echarts实例#}
+{#                var myChart = echarts.init(document.getElementById('main'));#}
+{##}
+{#                // 指定图表的配置项和数据#}
+{#                var option = {#}
+{#                    series: [#}
+{#                        {#}
+{#                            name: '药品数据',#}
+{#                            type: 'pie',#}
+{#                            radius: '55%',#}
+{#                            data: [#}
+{#                                {value: {{ medicine.usedtotal }}, name: '药品已使用量' + {{ medicine.usedtotal }}},#}
+{#                                {value: {{ medicine.nowtotal }}, name: '药品剩余量' +{{ medicine.nowtotal }}},#}
+{#                            ],#}
+{#                            roseType: 'angle',#}
+{#                            itemStyle: {#}
+{#                                normal: {#}
+{#                                    shadowBlur: 200,#}
+{#                                    shadowColor: 'rgba(0, 0, 0.5, 0.5)'#}
+{#                                }#}
+{#                            }#}
+{#                        }#}
+{#                    ]#}
+{#                };#}
+{##}
+{#                // 使用刚指定的配置项和数据显示图表。#}
+{#                myChart.setOption(option);#}
+{#            </script>#}
+
+
+            <script type="text/javascript">
+                var chartDom = document.getElementById('main');
+                var myChart = echarts.init(chartDom);
+                var option;
+
+                option = {
+                    title: {
+                        text: 'Information of medicine',
+                        subtext: '数据',
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'item'
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left'
+                    },
+                    series: [
+                        {
+                            name: '量（/g）',
+                            type: 'pie',
+                            radius: '50%',
+                            data: [
+                                {value: {{ medicine.usedtotal }}, name: '药品已使用量' + {{ medicine.usedtotal }}},
+                                {value: {{ medicine.nowtotal }}, name: '药品剩余量' +{{ medicine.nowtotal }}},
+
+                            ],
+                            emphasis: {
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                };
+
+                option && myChart.setOption(option);
+
+            </script>
+        </div>
+
+    </div>
+
+    </div>
+    <br>
+
+{% endblock %}

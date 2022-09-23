@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+{% extends 'lms/base.html' %}
+{% load static %}
+
+{% block title %}
+    -实验室列表
+{% endblock %}
+
+{% block css %}
+{% endblock %}
+
+{% block main_block %}
+    <h1>Lab</h1>
+
+
+    <div class="container">
+        <h2>这里是关于实验室的相关信息</h2>
+        {#        <p>联合使用 .table-dark 和 .table-hover 类可以设置黑色背景表格的鼠标悬停效果：</p>#}
+        <table class="table  table-hover">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>实验室名称</th>
+                <th>实验室详情</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for lab in labList %}
+
+                <tr>
+                    <th class="text" scope="row">{{ forloop.counter }}</th>
+                    <td class="text">{{ lab.name }}</td>
+                    <td class="text">{{ lab.description }}</td>
+                </tr>
+
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+    {# 实现分页标签的代码 #}
+    {# 这里使用 bootstrap 渲染页面 #}
+        <div id="pages" >
+        <nav>
+            <ul class="pagination">
+                {#                <li class="step-links">#}
+                {% if labList.has_previous %}
+                    {#                        <li class="page-item">#}
+                    {#                        <a class='active' href="?page={{ medicineList.previous_page_number }}">上一页</a>#}
+                    {#                        </li>#}
+                    {#                    {% endif %}#}
+
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ labList.previous_page_number }}">Previous</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                {% endif %}
+
+
+                {#                <span class="current">#}
+                {% for i in paginator.num_pages %}
+                    {% if labList.number == i %}
+                    <li class="page-item active"><span class="page-link"> {{ i }}
+                    <span class="sr-only">(current)</span></span></li>
+                    {%  else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+
+                {% endfor %}
+
+                {% if labList.has_next %}
+
+                    <li class="page-item"><a class="page-link"
+                                             href="?page={{ labList.next_page_number }}">Next</a></li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Next</span></li>
+                {% endif %}
+
+                {#                </li>#}
+            </ul>
+        </nav>
+    </div >
+
+
+{#    <div id="pages">#}
+{#        <nav>#}
+{#            <ul class="pagination">#}
+{#                <li class="step-links">#}
+{#                    {% if labList.has_previous %}#}
+{#                        <a class='active' href="?page={{ labList.previous_page_number }}">上一页</a>#}
+{#                    {% endif %}#}
+{##}
+{#                    <span class="current">#}
+{#                    Page {{ labList.number }} of {{ labList.paginator.num_pages }}</span>#}
+{##}
+{#                    {% if labList.has_next %}#}
+{#                        <a class='active' href="?page={{ labList.next_page_number }}">下一页</a>#}
+{#                    {% endif %}#}
+{#                </li>#}
+{#            </ul>#}
+{#        </nav>#}
+{#    </div>#}
+{% endblock %}

@@ -1,0 +1,164 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>预警</title>
+    <script src="{% static 'lms/js/echarts.min.js' %}" charset="utf-8"></script>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    {#    <script crossorigin="anonymous"#}
+    {#            integrity="sha512-UN8wX5Zf4Af6/2UJOYTYyWLHdua4SWMd1pnIxNoDCtqdaAMk1TQdvwwgoG7ShvuOS1d9jCerLNzwfvRmL7N4iA=="#}
+    {#            src="https://lib.baomitu.com/echarts/5.2.0/echarts.min.js"></script>#}
+</head>
+<body>
+<h1 align="center"> 预警可视化图表Charts </h1>
+<div class="col-md-12 col-xs-12 " id="main" style="width: 80%;height:400px;float:left;"></div>
+<script type="text/javascript">
+
+
+    var chartDom = document.getElementById('main');
+    var myChart = echarts.init(chartDom);
+    var option;
+
+    setTimeout(function () {
+        option = {
+            legend: {},
+            tooltip: {
+                trigger: 'axis',
+                showContent: false
+            },
+            dataset: {
+                source:{{ result_x|safe }}
+                {#[#}
+                {#['product', '2012', '2013', '2014', '2015', '2016', '2017'],#}
+                {#['Milk Tea', 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],#}
+                {#['Matcha Latte', 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],#}
+                {#['Cheese Cocoa', 40.1, 62.2, 69.5, 36.4, 45.2, 32.5],#}
+                {#['Walnut Brownie', 25.2, 37.1, 41.2, 18, 33.9, 49.1]#}
+                {#]#}
+
+            },
+            xAxis: {type: 'category'},
+            yAxis: {gridIndex: 0},
+            grid: {top: '55%'},
+            series: [
+                {
+                    type: 'line',
+                    smooth: true,
+                    seriesLayoutBy: 'row',
+                    emphasis: {focus: 'series'}
+                },
+                {
+                    type: 'line',
+                    smooth: true,
+                    seriesLayoutBy: 'row',
+                    emphasis: {focus: 'series'}
+                },
+                {
+                    type: 'line',
+                    smooth: true,
+                    seriesLayoutBy: 'row',
+                    emphasis: {focus: 'series'}
+                },
+                {
+                    type: 'line',
+                    smooth: true,
+                    seriesLayoutBy: 'row',
+                    emphasis: {focus: 'series'}
+                },
+                {
+                    type: 'pie',
+                    id: 'pie',
+                    radius: '30%',
+                    center: ['50%', '25%'],
+                    emphasis: {
+                        focus: 'self'
+                    },
+                    label: {
+                        formatter: '{b}: {@2012} ({d}%)'
+                    },
+                    encode: {
+                        itemName: '药品',
+                        value: '2012',
+                        tooltip: '2012'
+                    }
+                }
+            ]
+        };
+        myChart.on('updateAxisPointer', function (event) {
+            const xAxisInfo = event.axesInfo[0];
+            if (xAxisInfo) {
+                const dimension = xAxisInfo.value + 1;
+                myChart.setOption({
+                    series: {
+                        id: 'pie',
+                        label: {
+                            formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+                        },
+                        encode: {
+                            value: dimension,
+                            tooltip: dimension
+                        }
+                    }
+                });
+            }
+        });
+        myChart.setOption(option);
+    });
+
+    option && myChart.setOption(option);
+
+</script>
+
+<div class="col-md-4 " id=" data" style="width:20%;height:400px;float:right;">
+    <table class="table">
+        <caption>预警详情</caption>
+        <thead>
+        <tr>
+            <th>产品</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        {% for k, v in fianl_list.items %}
+
+            {% if  v == '安全' %}
+                <tr class="success">
+                    <td>{{ k }}</td>
+                    <td>安全</td>
+                </tr>
+
+            {% elif  v == '风险' %}
+                <tr class="warning">
+                    <td>{{ k }}</td>
+                    <td>风险</td>
+                </tr>
+            {% elif  v == '危险' %}
+                <tr class="danger">
+                    <td>{{ k }} </td>
+                    <td>危险</td>
+                </tr>
+            {% endif %}
+
+        {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+<footer class="panel-footer" style="width: 100%; overflow: hidden;">
+    <div class="container">
+
+        <hr style="border: 1px  solid #000000;">
+        <div class="row" style="text-align: center;">
+            <div class="col-sm-3 col-md-3 col-lg-3">
+                <a href="https://gitee.com/zcystart/chemlab.git" style=" color: gray;">ChanceZhou</a>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

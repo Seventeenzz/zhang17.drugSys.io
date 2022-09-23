@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+{% extends 'lms/base.html' %}
+{% load static %}
+
+{% block title %}
+    -用户信息
+{% endblock %}
+
+{% block css %}
+    {% static 'lms/css/usr_info.css' %}
+{% endblock %}
+
+
+
+
+
+{% block main_block %}
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <section id="content" class="clearfix">
+        <section class="light-buttons">
+            <div class="right">
+                <h1 class="dark-header">About you</h1>
+                <a href="{% url 'lms:userCentre' %}" class="button lightbg-blue clearfix"><span>个人信息</span>
+                    <div class="icon">
+                        <div class="arrow"></div>
+                    </div>
+                </a><a href="{% url 'lms:borrowHistory' %}" class="button lightbg-pink clearfix"><span>借阅药品历史</span>
+                <div class="icon">
+                    <div class="arrow"></div>
+                </div>
+            </a> <a href="{% url 'lms:borrowInsHistory' %}" class="button lightbg-green clearfix"><span>借阅仪器历史</span>
+                <div class="icon">
+                    <div class="arrow"></div>
+                </div>
+            </a><a href="{% url 'lms:changePassword' %}" class="button lightbg-orange clearfix"><span>修改密码</span>
+                <div class="icon">
+                    <div class="arrow"></div>
+                </div>
+            </a>
+            </div>
+        </section>
+    </section>
+
+
+
+{% endblock %}

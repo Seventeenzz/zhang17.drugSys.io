@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chart1Test</title>
+    <script src="{% static 'lms/js/echarts.min.js' %}" charset="utf-8"></script>
+
+    {#    <script crossorigin="anonymous"#}
+    {#            integrity="sha512-UN8wX5Zf4Af6/2UJOYTYyWLHdua4SWMd1pnIxNoDCtqdaAMk1TQdvwwgoG7ShvuOS1d9jCerLNzwfvRmL7N4iA=="#}
+    {#            src="https://lib.baomitu.com/echarts/5.2.0/echarts.min.js"></script>#}
+</head>
+<body>
+<h1> 近一月药品使用总计 </h1>
+
+<div class="col-md-6" id="main1" style="width: 50%;height:400px;float:left;"></div>
+
+
+<script type="text/javascript">
+    var chartDom = document.getElementById('main1');
+    var myChart = echarts.init(chartDom);
+    var option;
+
+    option = {
+        xAxis: {
+            type: 'category',
+            data: {{ name_list|safe }}
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                data:{{ used_list }},
+                type: 'bar',
+                showBackground: true,
+                backgroundStyle: {
+                    color: 'rgba(180, 180, 180, 0.2)'
+                }
+            }
+        ]
+    };
+
+    option && myChart.setOption(option);
+</script>
+
+<div class="col-md-6" id="main2" style="width: 50%;height:400px;float:right;"></div>
+
+<script type="text/javascript">
+    var chartDom = document.getElementById('main2');
+    var myChart = echarts.init(chartDom);
+    var option;
+
+    var kv = new Array();//声明一个新的字典
+    kv = {{ data|safe }};//取出后台传递的数据，此处添加safe过滤避免警告
+    var test = new Array();//声明一个新的字典用于存放数据
+    for (var logKey in kv) {
+        //将对应键值对取出存入test，logKey 为该字典的键
+        test.push({value: kv[logKey], name: logKey});
+    }
+
+
+    option = {
+        tooltip: {
+            trigger: 'item'
+        },
+        legend: {
+            top: '5%',
+            left: 'center'
+        },
+        series: [
+            {
+                name: '借用人借用次数',
+                type: 'pie',
+                radius: ['40%', '70%'],
+                avoidLabelOverlap: false,
+                itemStyle: {
+                    borderRadius: 10,
+                    borderColor: '#fff',
+                    borderWidth: 2
+                },
+                label: {
+                    show: false,
+                    position: 'center'
+                },
+                emphasis: {
+                    label: {
+                        show: true,
+                        fontSize: '40',
+                        fontWeight: 'bold'
+                    }
+                },
+                labelLine: {
+                    show: false
+                },
+                data: test,//赋值方式为字典传值
+            }
+        ]
+    };
+
+    option && myChart.setOption(option);
+
+</script>
+
+<footer class="panel-footer" style="width: 100%; overflow: hidden;">
+    <div class="container">
+
+        <hr style="border: 1px  solid #000000;">
+        <div class="row" style="text-align: center;">
+            <div class="col-sm-3 col-md-3 col-lg-3">
+                <a href="https://gitee.com/zcystart/chemlab.git" style=" color: gray;">ChanceZhou</a>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+{% extends 'lms/base.html' %}
+{% load static %}
+
+{% block title %}
+    -主页
+{% endblock %}
+
+{% block css %}
+    {% static 'lms/css/index.css' %}
+
+{% endblock %}
+{% block indexHighlight %}
+    active
+{% endblock %}
+{% block main_block %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {% if successInfo %}
+            <div class="text-center welcomeSlogan"><strong>{{ successInfo }}</strong></div>
+        {% elif failedInfo %}
+            <div class="text-center welcomeSlogan"><strong>{{ failedInfo }}</strong></div>
+        {% elif user.is_authenticated %}
+            <div class="text-center welcomeSlogan">
+                <strong>欢迎登录实验室药品使用系统,下面是药品信息</strong>
+            </div>
+        {% else %}
+            <div class="text-center welcomeSlogan"><strong>欢迎登录实验室药品使用系统,还未登录</strong></div>
+        {% endif %}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+
+
+    <div id="table-responsive">
+        <table class="table table-hover">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">序号</th>
+                <th scope="col">药品编号</th>
+                <th scope="col">药品名</th>
+                <th scope="col">药品剩余量</th>
+                {#                <th scope="col">危险系数(MAX 5)</th>#}
+                <th scope="col">状态|动作</th>
+                {#                <th scope="col">动作</th>#}
+            </tr>
+            </thead>
+            <tbody class="no_underline">
+            {% for medicine in medicineList %}
+                {% if medicine.nowtotal == 0 %}
+                    <tr class="table">
+                        <th class="text-dark" scope="row">{{ forloop.counter }}</th>
+                        <td class="text-dark" id="line_through">{{ medicine.number }}</td>
+                        <td class="text-dark" id="line_through">
+                            <a href="{% url 'lms:medicineDetail' medicine.id %}">{{ medicine.name }}</a>
+                        </td>
+                        <td class="text-dark" id="line_through">{{ medicine.nowtotal }} g</td>
+                        {#                        <td class="text-dark" id="line_through">{{ medicine.riskfactor }}</td>#}
+                        <td>
+                            <button type="button" class="btn btn-warning btn-sm">暂时短缺</button>
+                            {#                        </td>#}
+                            {#                        <td>#}
+                            <button type="button" class="btn btn-info btn-sm">无法借用
+                            </button>
+                        </td>
+                    </tr>
+                {% elif medicine.nowtotal <= 50 %}
+                    <tr class="table">
+                        <th class="text-dark" scope="row">{{ forloop.counter }}</th>
+                        <td class="text-dark">{{ medicine.number }}</td>
+                        <td class="text-dark">
+                            <a href="{% url 'lms:medicineDetail' medicine.id %}">{{ medicine.name }}</a>
+                        </td>
+                        <td class="text-dark">{{ medicine.nowtotal }} g</td>
+                        {#                        <td class="text-dark">{{ medicine.riskfactor }}</td>#}
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm">库存紧张</button>
+                            {#                        </td>#}
+                            {#                        <td>#}
+                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                    data-target="#myModal{{ medicine.id }}" id="addStudent">点击借用
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="myModal{{ medicine.id }}" tabindex="-1" role="dialog"
+                                 aria-labelledby="myModal{{ medicine.id }}Label"
+                                 aria-hidden="true">
+                                <div class="modal-dialog" role="document" id="stuadd_modal">
+                                    <div class="modal-content">
+
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="myModal{{ medicine.id }}Label">
+                                                请确认借用</h5>
+                                            <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+
+                                        <div class="modal-body">
+                                            确认要借用该药品<strong>{{ medicine.name }}</strong>吗？
+
+                                            <br>
+                                            <form action="{% url 'lms:subAndBo' medicine.id %}" method="post">
+
+                                                {% csrf_token %}
+
+                                                <div class="form-group">
+                                                    <label for="id_medicineUsedNum"
+                                                           class="col-sm-4 control-label">数量：</label>
+                                                    <div class="col-sm-8">
+
+                                                        <input type="text" class="form-control"
+                                                               name="medicineUsedNum"
+                                                               id="id_medicineUsedNum" required
+                                                               oninput="value=value.replace(/[^\d]/g,'')"
+                                                               placeholder="借用药品数量（g）">
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="id_lab"
+                                                           class="col-sm-4 control-label">实验室：</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" class="form-control" name="lab"
+                                                               id="id_lab" required placeholder="请输入实验室名称">
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-primary">确认</button>
+                                                    <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">取消
+                                                    </button>
+                                                </div>
+
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+
+                    </tr>
+                {% else %}
+                    <tr class="table">
+                        <th class="text" scope="row">{{ forloop.counter }}</th>
+                        <td class="text">{{ medicine.number }}</td>
+                        <td class="text">
+                            <a href="{% url 'lms:medicineDetail' medicine.id %}">{{ medicine.name }}</a>
+                        </td>
+                        <td class="text">{{ medicine.nowtotal }} g</td>
+                        {#                        <td class="text">{{ medicine.riskfactor }}</td>#}
+                        <td>
+                            <button type="button" class="btn btn-success btn-sm">库存充足
+                            </button>
+                            {#                        </td>#}
+                            {##}
+                            {#                        <td>#}
+
+                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                    data-target="#myModal{{ medicine.id }}" id="addStudent">点击借用
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="myModal{{ medicine.id }}" tabindex="-1" role="dialog"
+                                 aria-labelledby="myModal{{ medicine.id }}Label"
+                                 aria-hidden="true">
+                                <div class="modal-dialog" role="document" id="stuadd_modal">
+                                    <div class="modal-content">
+
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="myModal{{ medicine.id }}Label">
+                                                请确认借用</h5>
+                                            <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+
+                                        <div class="modal-body">
+                                            确认要借用该药品<strong>{{ medicine.name }}</strong>吗？
+
+                                            <br>
+                                            <form action="{% url 'lms:subAndBo' medicine.id %}" method="post">
+
+                                                {% csrf_token %}
+
+                                                <div class="form-group">
+                                                    <label for="id_medicineUsedNum"
+                                                           class="col-sm-4 control-label">数量：</label>
+                                                    <div class="col-sm-8">
+
+                                                        <input type="text" class="form-control"
+                                                               name="medicineUsedNum"
+                                                               id="id_medicineUsedNum" required
+                                                               oninput="value=value.replace(/[^\d]/g,'')"
+                                                               placeholder="借用药品数量（g）">
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="id_lab"
+                                                           class="col-sm-4 control-label">实验室：</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" class="form-control" name="lab"
+                                                               id="id_lab" required placeholder="请输入实验室名称">
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-primary">确认</button>
+                                                    <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">取消
+                                                    </button>
+                                                </div>
+
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {#主体代码结束#}
+
+
+    {# 实现分页标签的代码 #}
+    {# 这里使用 bootstrap 渲染页面 #}
+
+    <div id="pages">
+        <nav>
+            <ul class="pagination">
+                {#                <li class="step-links">#}
+                {% if medicineList.has_previous %}
+                    {#                        <li class="page-item">#}
+                    {#                        <a class='active' href="?page={{ medicineList.previous_page_number }}">上一页</a>#}
+                    {#                        </li>#}
+                    {#                    {% endif %}#}
+
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ medicineList.previous_page_number }}">Previous</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                {% endif %}
+
+
+                {#                <span class="current">#}
+                {% for i in paginator.num_pages %}
+                    {% if medicineList.number == i %}
+                        <li class="page-item active"><span class="page-link"> {{ i }}
+                    <span class="sr-only">(current)</span></span></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+
+                {% endfor %}
+
+                {% if medicineList.has_next %}
+
+                    <li class="page-item"><a class="page-link"
+                                             href="?page={{ medicineList.next_page_number }}">Next</a></li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Next</span></li>
+                {% endif %}
+
+                {#                </li>#}
+            </ul>
+        </nav>
+    </div>
+
+{% endblock %}

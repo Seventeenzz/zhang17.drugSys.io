@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+{% extends 'lms/base.html' %}
+{% load static %}
+
+{% block title %}
+    -借阅历史
+{% endblock %}
+
+{% block css %}
+    {% static 'lms/css/borrowHistory.css' %}
+{% endblock %}
+{% block main_block %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {% if successInfo %}
+            <div class="text-center welcomeSlogan"><strong>{{ successInfo }}</strong></div>
+        {% elif failedInfo %}
+            <div class="text-center welcomeSlogan"><strong>{{ failedInfo }}</strong></div>
+        {% else %}
+            <div class="text-center welcomeSlogan"><strong>欢迎查看借阅历史</strong></div>
+        {% endif %}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="col-md-12">
+        <div id="table-responsive">
+            <table class="table table-hover">
+                <thead class="thead-light">
+                <tr>
+                    <th scope="col">序号</th>
+                    <th scope="col">药品</th>
+                    <th scope="col">药品使用量</th>
+                    <th scope="col">实验室</th>
+                    <th scope="col">使用时间</th>
+                </tr>
+                </thead>
+
+                <tbody class="no_underline">
+                {% if MedicineList %}
+                    {% for medicine,borrowInfo,borrowTime in MedicineList %}
+                        <tr class="table">
+                            <th class="text-dark" scope="row">{{ forloop.counter }}</th>
+                            <td class="text-dark">{{ borrowInfo.medicine }}</td>
+                            <td class="text-dark">{{ borrowInfo.medicineUsedNum }} g</td>
+                            <td class="text-dark">{{ borrowInfo.lab }}</td>
+                            <td class="text-dark">{{ borrowInfo.boDate }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+    {#        右侧栏#}
+    <!-- 引入 echarts.js -->
+
+
+
+
+
+
+{% endblock %}
