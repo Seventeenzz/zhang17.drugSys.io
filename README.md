@@ -2,21 +2,6 @@
 [![github](https://img.shields.io/badge/build-Python-green.svg)]()
 
 
-##### 1. 学生端
-    学生账号：19001234
-    学生密码：xm123456
-##### 2. 管理员端/教师端
-    管理员账号：admin
-    管理员密码：admin123
-    
-    教师账号： x100x
-    教师密码： x100x123
-
-### 运行环境
-在Python3.7,Django2.2,MySQL8.0 版本下测试运行成功，windows,linux平台。
-### 运行步骤
-首先安装好运行环境，配置好python虚拟环境
-
 ```bash
 1.安装requirements.txt依赖包（环境）
 pip install -r requirements.txt
