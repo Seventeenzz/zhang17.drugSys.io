@@ -1,11 +1,6 @@
 [![github](https://img.shields.io/badge/language-Django-yellow.svg)]()
 [![github](https://img.shields.io/badge/build-Python-green.svg)]()
 
-###在线演示环境
-http://101.34.18.118:8002/
-<br>（图片未压缩，所以加载有点慢）
-
-这个不知道被谁用admin改密了，导致admin不能登录了了👀👀
 
 ##### 1. 学生端
     学生账号：19001234
